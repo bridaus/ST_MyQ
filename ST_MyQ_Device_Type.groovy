@@ -61,11 +61,11 @@ metadata
 {
 	definition (name: "MyQ Garage Door", author: "Adam Heinmiller") 
     {
-		capability "Polling"
+        capability "Polling"
         capability "Switch"
         capability "Refresh"
         capability "Contact Sensor"
-		capability "Momentary"
+        capability "Momentary"
         
         attribute "doorStatus", "string"
         attribute "vacationStatus", "string"
@@ -91,15 +91,13 @@ metadata
 		standardTile("sDoorToggle", "device.doorStatus", width: 1, height: 1, canChangeIcon: false) 
         {
 			state "default", label:''
-
 			state "unknown", label: 'Unknown', icon: "st.unknown.unknown.unknown", action: "refresh.refresh", backgroundColor: "#afafaf"
 			state "door_not_found", label:'Not Found', backgroundColor: "#CC1821"            
-
 			state "stopped", label: 'Stopped', icon: "st.contact.contact.open", action: "close", backgroundColor: "#ffdd00"
 			state "closed", label: 'Closed', icon:"st.doors.garage.garage-closed", action: "open", backgroundColor: "#ffffff"
-            state "closing", label: 'Closing', icon:"st.doors.garage.garage-closing", backgroundColor: "#ffdd00"
+			state "closing", label: 'Closing', icon:"st.doors.garage.garage-closing", backgroundColor: "#ffdd00"
 			state "open", label: 'Open', icon:"st.doors.garage.garage-open", action: "close", backgroundColor: "#ffdd00"
-            state "opening", label: 'Opening', icon:"st.doors.garage.garage-opening", backgroundColor: "#ffdd00"
+			state "opening", label: 'Opening', icon:"st.doors.garage.garage-opening", backgroundColor: "#ffdd00"
 			state "moving", label: 'Moving', icon: "st.motion.motion.active", action: "refresh.refresh", backgroundColor: "#ffdd00"
 		}
 
@@ -165,7 +163,7 @@ def installed() {
 	log.debug "Installing MyQ Garage Door"
 
 	state.Login = [ BrandID: "Chamberlain", Expiration: 0 ]
-    state.DeviceID = 0
+	state.DeviceID = 0
 }
 
 
@@ -174,9 +172,8 @@ def updated() {
 	log.debug "Updating MyQ Garage Door"
     
 	state.Login.Expiration = 0
-    state.DeviceID = 0
-    
-    checkLogin()
+	state.DeviceID = 0
+	checkLogin()
 }
 
 
@@ -184,8 +181,7 @@ def updated() {
 def poll() 
 {
 	log.debug "MyQ Garage door Polling"
-    
-    refresh()
+    	refresh()
 }
 
 def on()
@@ -235,11 +231,11 @@ def refresh()
 
 	login()
     
-    getDoorStatus() { status ->
+	getDoorStatus() { status ->
             
     	setDoorState(status, true)
         
-        setContactSensorState(status, true)      
+	setContactSensorState(status, true)      
         
     	log.debug "Door Status: $status"
     }
@@ -248,24 +244,20 @@ def refresh()
 def open()
 {
 	log.debug "Opening Door"
-	
+	    
+	checkLogin()
     
-    checkLogin()
     
+	def dInitStatus
+	def dCurrentStatus = "opening"
     
-    def dInitStatus
-    def dCurrentStatus = "opening"
-    
-    getDoorStatus() { status -> dInitStatus = status }
+	getDoorStatus() { status -> dInitStatus = status }
                    
 	if (dInitStatus == "opening" || dInitStatus == "open" || dInitStatus == "moving") { return }
 
-
 	setDoorState("opening", true)
     
-    openDoor()
-
-
+	openDoor()
 
 	while (dCurrentStatus == "opening")
     {
